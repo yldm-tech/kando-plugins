@@ -1,14 +1,14 @@
 {
-  "maintainers": ["houko"],
+  "maintainers": ["houko", "Session500"],
   "publishers": {
     "kando": {
       "name": "Kando (signed script plugins only)",
-      "github": ["houko"],
+      "github": ["houko", "Session500"],
       "scripts": true
     },
     "yldm": {
       "name": "Kando team",
-      "github": ["houko"],
+      "github": ["houko", "Session500"],
       "scripts": false
     }
   }
