@@ -30,7 +30,7 @@ concurrency:
 env:
   # The Kando checkout the validator and signer are built from; keep it the same as validate.yml's.
   KANDO_REPO: yldm-tech/Kando
-  KANDO_REF: 6e5de4f691dd5d9cd6f83522d825c3351b109ae2
+  KANDO_REF: dba0914c20cc92abd0a37d4ceb06719cd77c3634
   KANDO_PLUGIN_TOOL: ./apps/kando/cmd/kando-plugin
   # Where Kando downloads the packs from (each entry's url is this followed by the file's name), and where this workflow reads what is published now.
   PACKS_BASE: https://kando.yldm.ai/plugin/packs/

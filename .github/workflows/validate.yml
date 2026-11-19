@@ -20,8 +20,8 @@ concurrency:
 env:
   # The Kando checkout the validator is built from. Bump KANDO_REF to a commit of yldm-tech/Kando's main that has the tool, and again whenever Kando's pack rules change.
   KANDO_REPO: yldm-tech/Kando
-  KANDO_REF: 6e5de4f691dd5d9cd6f83522d825c3351b109ae2
-  # The validator's Go package inside that checkout. It is built once and run as kando-plugin with the subcommands validate [--json] <pack file>, preview --markdown <folder> and index <folder> --base <url> --out <file>.
+  KANDO_REF: dba0914c20cc92abd0a37d4ceb06719cd77c3634
+  # The validator's Go package inside that checkout. It is built once and run as kando-plugin with the subcommands validate [--json] <pack file>, preview --markdown <pack file>... (a folder given to it is read as one unpacked pack) and index <folder> --base <url> --out <file>.
   KANDO_PLUGIN_TOOL: ./apps/kando/cmd/kando-plugin
 
 jobs:
@@ -117,7 +117,7 @@ jobs:
         if: steps.build.outputs.status == '0'
         run: |
           status=0
-          "$RUNNER_TEMP/kando-plugin" preview --markdown "$RUNNER_TEMP/packs" > "$RUNNER_TEMP/out/preview.md" || status=$?
+          "$RUNNER_TEMP/kando-plugin" preview --markdown "$RUNNER_TEMP"/packs/* > "$RUNNER_TEMP/out/preview.md" || status=$?
           echo "status=$status" >> "$GITHUB_OUTPUT"
 
       - name: Assemble the comment
