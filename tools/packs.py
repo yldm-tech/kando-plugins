@@ -55,6 +55,8 @@ SCRIPT_LICENSES = {
     "MIT", "Apache-2.0", "BSD-2-Clause", "BSD-3-Clause", "ISC", "0BSD", "Unlicense", "CC0-1.0",
     "MPL-2.0", "LGPL-3.0-only", "LGPL-3.0-or-later", "GPL-3.0-only", "GPL-3.0-or-later",
 }
+# Kando's own official script plugins (publisher kando, which only Kando's release key signs) carry Kando's license, the Functional Source License with its Apache-2.0 future license; no other publisher may use it.
+OFFICIAL_SCRIPT_LICENSES = SCRIPT_LICENSES | {"FSL-1.1-ALv2"}
 
 ID_PATTERN = re.compile(r"^[a-z0-9]+(?:[.-][a-z0-9]+)*$")
 FILE_PATTERN = re.compile(r"^[A-Za-z0-9_-][A-Za-z0-9._-]*[A-Za-z0-9_-]$|^[A-Za-z0-9_-]$")
@@ -238,7 +240,8 @@ def check_script(repo, pack_id, pubs, report):
     if name != pack_file_name(pack_id, version, ".kandoplugin"):
         report.error(f"{where}/{name}", f"is named {pack_file_name(pack_id, version, '.kandoplugin')} for the version it holds")
     lic = m.get("license", "")
-    if not isinstance(lic, str) or not license_ok(lic, SCRIPT_LICENSES):
+    accepted = OFFICIAL_SCRIPT_LICENSES if pack_id.split(".")[0] == "kando" else SCRIPT_LICENSES
+    if not isinstance(lic, str) or not license_ok(lic, accepted):
         report.error(f"{where}/{name}", f"license {lic!r} is not one this directory accepts for script plugins (CONTRIBUTING.md, Licensing)")
     src = os.path.join(folder, "src")
     src_manifest = os.path.join(src, MANIFEST)

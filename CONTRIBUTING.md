@@ -311,7 +311,7 @@ Accepted for **data packs**:
 | `ODC-By-1.0`, `ODbL-1.0` | Open Data Commons |
 | `MIT`, `Apache-2.0`, `BSD-2-Clause`, `BSD-3-Clause`, `ISC`, `0BSD` | Permissive software licenses |
 
-Accepted for **script plugins**: `MIT`, `Apache-2.0`, `BSD-2-Clause`, `BSD-3-Clause`, `ISC`, `0BSD`, `Unlicense`, `CC0-1.0`, `MPL-2.0`, `LGPL-3.0-only`, `LGPL-3.0-or-later`, `GPL-3.0-only`, `GPL-3.0-or-later`.
+Accepted for **script plugins**: `MIT`, `Apache-2.0`, `BSD-2-Clause`, `BSD-3-Clause`, `ISC`, `0BSD`, `Unlicense`, `CC0-1.0`, `MPL-2.0`, `LGPL-3.0-only`, `LGPL-3.0-or-later`, `GPL-3.0-only`, `GPL-3.0-or-later`. Kando's own official plugins (publisher `kando`) may also carry Kando's license, `FSL-1.1-ALv2`; no other publisher may.
 
 An expression joining accepted ids with `AND` or `OR` is accepted too. Non-commercial (`-NC`) and no-derivatives (`-ND`) licenses, "free for personal use" terms, and data scraped from sites whose terms forbid it are not. When in doubt, ask in the PR before doing the work.
 
