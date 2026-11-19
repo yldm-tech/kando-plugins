@@ -1,0 +1,165 @@
+name: Validate
+
+# Checks a pull request's packs the way Kando installs them, and writes the preview a maintainer reviews. It runs on pull_request, never pull_request_target: a fork's PR runs here with a read-only token and no secrets, so the code it brings (its packs, and even a changed copy of this workflow) can at worst fail or fake its own result, which review catches. It writes nothing to the repository; the preview goes out as an artifact, and Preview comment (preview-comment.yml), a workflow_run workflow that runs the default branch's code and never checks out the PR, posts it.
+#
+# The checks this repository adds (tools/packs.py: layout, publisher ownership, licenses, sizes, version bumps) run from the base branch's checkout, so a PR cannot loosen them by editing the script. The pack validation itself is Kando's own tool, built from the Kando repository at a pinned commit.
+#
+# Actions are pinned to commit SHAs with the tag in a trailing comment, as in the Kando repository: a tag is a moving pointer its owner can repoint.
+on:
+  pull_request:
+    # labeled and unlabeled rerun the checks when a maintainer adds or removes maintainer-override.
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: validate-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+env:
+  # The Kando checkout the validator is built from. Bump KANDO_REF to a commit of yldm-tech/Kando's main that has the tool, and again whenever Kando's pack rules change.
+  KANDO_REPO: yldm-tech/Kando
+  KANDO_REF: e2c24b376b6db23b0b37dd2eab836e36a7703e44
+  # The validator's Go package inside that checkout. It is built once and run as kando-plugin with the subcommands validate [--json] <pack file>, preview --markdown <folder> and index <folder> --base <url> --out <file>.
+  KANDO_PLUGIN_TOOL: ./apps/kando/cmd/kando-plugin
+
+jobs:
+  validate:
+    name: Validate packs
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out the base branch (trusted checks)
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: base
+          persist-credentials: false
+
+      - name: Check out the pull request
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: pr
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Check out Kando
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: ${{ env.KANDO_REPO }}
+          ref: ${{ env.KANDO_REF }}
+          path: kando
+          persist-credentials: false
+
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: kando/go.work
+          cache-dependency-path: kando/**/go.sum
+
+      - name: Build the Kando plugin tool
+        working-directory: kando
+        run: go build -o "$RUNNER_TEMP/kando-plugin" "$KANDO_PLUGIN_TOOL"
+
+      # The PR's files are judged as merged into the base (the merge commit checked out above); what it changed is the diff from where it branched off the base to its head.
+      # Every step from here records its result and goes on, so the preview shows every problem at once; the last step fails the job.
+      - name: Repository checks
+        id: checks
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          AUTHOR: ${{ github.event.pull_request.user.login }}
+          OVERRIDE: ${{ contains(github.event.pull_request.labels.*.name, 'maintainer-override') }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/out"
+          override=()
+          if [ "$OVERRIDE" = true ]; then override=(--override); fi
+          status=0
+          python3 -I base/tools/packs.py pr --repo pr --base "$BASE_SHA" --head "$HEAD_SHA" --author "$AUTHOR" "${override[@]}" --markdown "$RUNNER_TEMP/out/checks.md" || status=$?
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+
+      - name: Build pack files
+        id: build
+        run: |
+          status=0
+          python3 -I base/tools/packs.py build --repo pr --out "$RUNNER_TEMP/packs" || status=$?
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+
+      - name: Validate with Kando's rules
+        id: kando
+        if: steps.build.outputs.status == '0'
+        run: |
+          out="$RUNNER_TEMP/out"
+          status=0
+          {
+            echo "### Kando validation"
+            echo
+            echo "| File | Result |"
+            echo "|---|---|"
+          } > "$out/validate.md"
+          : > "$out/validate.jsonl"
+          for f in "$RUNNER_TEMP"/packs/*; do
+            name=$(basename "$f")
+            if "$RUNNER_TEMP/kando-plugin" validate --json "$f" > "$RUNNER_TEMP/one.json" 2> "$RUNNER_TEMP/one.err"; then
+              jq -c --arg file "$name" '. + {file: $file}' "$RUNNER_TEMP/one.json" >> "$out/validate.jsonl"
+              echo "| \`$name\` | valid |" >> "$out/validate.md"
+            else
+              status=1
+              reason=$(tr '\n|' '  ' < "$RUNNER_TEMP/one.err" | cut -c1-500)
+              echo "::error title=$name::$reason"
+              echo "| \`$name\` | **refused:** $reason |" >> "$out/validate.md"
+            fi
+          done
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+
+      - name: Preview
+        id: preview
+        if: steps.build.outputs.status == '0'
+        run: |
+          status=0
+          "$RUNNER_TEMP/kando-plugin" preview --markdown "$RUNNER_TEMP/packs" > "$RUNNER_TEMP/out/preview.md" || status=$?
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+
+      - name: Assemble the comment
+        if: always()
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          out="$RUNNER_TEMP/out"
+          mkdir -p "$out"
+          {
+            echo "## Plugin preview"
+            echo
+            echo "For ${HEAD_SHA:0:12}."
+            echo
+            for part in checks validate preview; do
+              if [ -s "$out/$part.md" ]; then cat "$out/$part.md"; echo; fi
+            done
+          } > "$out/comment.md"
+          echo "$PR_NUMBER" > "$out/pr-number"
+          echo "$HEAD_SHA" > "$out/head-sha"
+          cat "$out/comment.md" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload the preview
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: preview
+          path: |
+            ${{ runner.temp }}/out/comment.md
+            ${{ runner.temp }}/out/pr-number
+            ${{ runner.temp }}/out/head-sha
+          retention-days: 7
+          if-no-files-found: error
+
+      - name: Result
+        if: always()
+        env:
+          CHECKS: ${{ steps.checks.outputs.status }}
+          BUILD: ${{ steps.build.outputs.status }}
+          KANDO: ${{ steps.kando.outputs.status }}
+          PREVIEW: ${{ steps.preview.outputs.status }}
+        run: |
+          echo "repository checks: ${CHECKS:-not run}, build: ${BUILD:-not run}, Kando validation: ${KANDO:-not run}, preview: ${PREVIEW:-not run}"
+          [ "$CHECKS" = 0 ] && [ "$BUILD" = 0 ] && [ "$KANDO" = 0 ] && [ "$PREVIEW" = 0 ]

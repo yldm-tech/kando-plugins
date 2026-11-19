@@ -1,0 +1,117 @@
+name: Publish
+
+# Builds every pack on main, signs the community index and deploys index.json and the pack files to this repository's GitHub Pages site (https://yldm-tech.github.io/kando-plugins/). The Cloudflare Worker in worker/ serves that site as https://kando.yldm.ai/plugin/index.json and https://kando.yldm.ai/plugin/packs/<file>, the addresses Kando reads, so the index lists each pack under the latter.
+#
+# Only code already on main runs here. The index key's secret, KANDO_PLUGINS_INDEX_KEY, lives in the environment publish, which only main may use, and reaches the one step that signs. Pages deployment authenticates through OIDC: only the deploy job, which runs nothing but actions/deploy-pages, can write to Pages and mint an OIDC token.
+#
+# GitHub Pages sets its own cache headers (max-age=600) and they cannot be changed; the Worker sets the ones Kando's clients and Cloudflare's cache see.
+#
+# Actions are pinned to commit SHAs with the tag in a trailing comment, as in the Kando repository.
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "packs/**"
+      - "scripts/**"
+      - "publishers.json"
+      - "tools/**"
+      - ".github/workflows/publish.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# One publish at a time, in order: a queued run waits for the one in flight rather than cancelling it, so the site is never left half-written and a newer index is never overwritten by an older one.
+concurrency:
+  group: publish
+  cancel-in-progress: false
+
+env:
+  # The Kando checkout the validator and signer are built from; keep it the same as validate.yml's.
+  KANDO_REPO: yldm-tech/Kando
+  KANDO_REF: e2c24b376b6db23b0b37dd2eab836e36a7703e44
+  KANDO_PLUGIN_TOOL: ./apps/kando/cmd/kando-plugin
+  # Where Kando downloads the packs from (each entry's url is this followed by the file's name), and where this workflow reads what is published now.
+  PACKS_BASE: https://kando.yldm.ai/plugin/packs/
+  PAGES_ORIGIN: https://yldm-tech.github.io/kando-plugins
+
+jobs:
+  build:
+    name: Build and sign
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: publish
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: repo
+          persist-credentials: false
+
+      - name: Check out Kando
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: ${{ env.KANDO_REPO }}
+          ref: ${{ env.KANDO_REF }}
+          path: kando
+          persist-credentials: false
+
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: kando/go.work
+          cache-dependency-path: kando/**/go.sum
+
+      - name: Build the Kando plugin tool
+        working-directory: kando
+        run: go build -o "$RUNNER_TEMP/kando-plugin" "$KANDO_PLUGIN_TOOL"
+
+      - name: Repository checks
+        run: python3 -I repo/tools/packs.py check --repo repo
+
+      - name: Build pack files
+        run: python3 -I repo/tools/packs.py build --repo repo --out "$RUNNER_TEMP/packs"
+
+      # A pack file already published keeps its bytes (a cached index has its SHA-256), and files that left the index stay a week for Kando installs whose cached index still lists them.
+      - name: Keep published files
+        run: python3 -I repo/tools/packs.py carry --origin "$PAGES_ORIGIN" --out "$RUNNER_TEMP/packs" --site _site
+
+      - name: Validate with Kando's rules
+        run: |
+          for f in "$RUNNER_TEMP"/packs/*; do
+            "$RUNNER_TEMP/kando-plugin" validate "$f"
+          done
+
+      - name: Sign the index
+        env:
+          KANDO_PLUGINS_INDEX_KEY: ${{ secrets.KANDO_PLUGINS_INDEX_KEY }}
+        run: |
+          "$RUNNER_TEMP/kando-plugin" index "$RUNNER_TEMP/packs" --base "$PACKS_BASE" --out _site/index.json
+
+      - name: Assemble the site
+        run: |
+          cp "$RUNNER_TEMP"/packs/* _site/packs/
+          touch _site/.nojekyll
+          ls -la _site _site/packs
+          du -sh _site
+
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: _site
+
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
