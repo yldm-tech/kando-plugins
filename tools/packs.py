@@ -378,7 +378,9 @@ def check_pr(repo, base, head, author, override, report):
     if git_exists(repo, base, "publishers.json"):
         base_data = json.loads(git(repo, "show", f"{base}:publishers.json"))
         maintainers, base_pubs = base_data.get("maintainers", []), base_data.get("publishers", {})
-    trusted = author in maintainers or override
+    # GitHub logins are case-insensitive.
+    author = author.lower()
+    trusted = author in {m.lower() for m in maintainers} or override
     if override:
         report.note("PR", "a maintainer applied the `maintainer-override` label: publisher ownership and maintainer-only paths are not enforced")
     changed = [p for p in git(repo, "diff", "--name-only", "--no-renames", f"{base}...{head}").splitlines() if p]
@@ -395,7 +397,7 @@ def check_pr(repo, base, head, author, override, report):
     for where, (kind, pack_id) in sorted(touched.items()):
         publisher = pack_id.split(".")[0]
         owners = base_pubs.get(publisher, {}).get("github", [])
-        if not trusted and author not in owners:
+        if not trusted and author not in {o.lower() for o in owners}:
             if publisher in base_pubs:
                 report.error(where, f"publisher {publisher!r} belongs to {', '.join('@' + o for o in owners) or 'nobody'}; @{author} may only add or change packs under their own publisher")
             else:
