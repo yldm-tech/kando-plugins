@@ -1,0 +1,40 @@
+{
+  "schema": 1,
+  "id": "yldm.anki-tsv",
+  "kind": "export-template",
+  "version": "1.0.0",
+  "license": "CC0-1.0",
+  "author": "Kando team",
+  "homepage": "https://github.com/yldm-tech/kando-plugins",
+  "name": {
+    "en": "Anki import (TSV)",
+    "zh-Hans": "Anki 导入（TSV）",
+    "zh-Hant": "Anki 匯入（TSV）",
+    "ja": "Anki 読み込み用（TSV）",
+    "ko": "Anki 가져오기 (TSV)"
+  },
+  "description": {
+    "en": "Saved lines as a tab-separated file without a header row, four fields a line: the original, the translation, your note, and the film and time. In Anki, use File › Import, pick Tab as the separator, and map the fields to a note type with four fields.",
+    "zh-Hans": "把收藏的句子写成以制表符分隔、没有表头的文件，每句四个字段：原文、译文、你的笔记、影片和时间。在 Anki 里用「文件 › 导入」，分隔符选制表符，把字段对应到有四个字段的笔记类型。",
+    "zh-Hant": "把收藏的句子寫成以定位字元分隔、沒有表頭的檔案，每句四個欄位：原文、譯文、你的筆記、影片和時間。在 Anki 裡用「檔案 › 匯入」，分隔符號選定位字元，把欄位對應到有四個欄位的筆記類型。",
+    "ja": "保存したセリフを見出し行のないタブ区切りファイルにします。1行に4フィールド：原文、訳、メモ、作品名と時間。Anki では「ファイル › 読み込む」で区切りにタブを選び、4フィールドのノートタイプに割り当てます。",
+    "ko": "저장한 대사를 머리글 행 없는 탭 구분 파일로 만듭니다. 한 줄에 필드 네 개: 원문, 번역, 메모, 작품과 시간. Anki에서 파일 › 가져오기로 구분자를 탭으로 고르고, 필드가 네 개인 노트 유형에 연결하세요."
+  },
+  "template": {
+    "format": "tsv",
+    "columns": [
+      {
+        "value": "{{original}}"
+      },
+      {
+        "value": "{{translation}}"
+      },
+      {
+        "value": "{{note}}"
+      },
+      {
+        "value": "{{film}} {{time}}"
+      }
+    ]
+  }
+}

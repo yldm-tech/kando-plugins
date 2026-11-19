@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "id": "yldm.style-formal",
+  "kind": "translate-style",
+  "version": "1.0.0",
+  "license": "CC0-1.0",
+  "author": "Kando team",
+  "homepage": "https://github.com/yldm-tech/kando-plugins",
+  "name": {
+    "en": "Formal and precise",
+    "zh-Hans": "正式严谨",
+    "zh-Hant": "正式嚴謹",
+    "ja": "丁寧で正確な訳",
+    "ko": "격식 있고 정확한 번역"
+  },
+  "description": {
+    "en": "Careful, polite translations for lectures, interviews, news and documentaries: complete sentences, standard grammar and terms kept exact.",
+    "zh-Hans": "适合讲座、访谈、新闻和纪录片的严谨译文：句子完整、语法规范，术语保持准确。",
+    "zh-Hant": "適合講座、訪談、新聞和紀錄片的嚴謹譯文：句子完整、語法規範，術語保持準確。",
+    "ja": "講義、インタビュー、ニュース、ドキュメンタリー向けの丁寧な訳。文を省略せず、標準的な文法で、用語は正確に保ちます。",
+    "ko": "강의, 인터뷰, 뉴스, 다큐멘터리에 맞는 신중하고 정중한 번역. 완전한 문장과 표준 문법으로, 용어는 정확하게 유지합니다."
+  },
+  "style": {
+    "prompt": "You translate subtitles of lectures, interviews, news and documentaries into {{language}}. Write complete, grammatical sentences in a polite, standard register, as a professional translator would for publication. Keep technical terms, names, numbers, dates and units exact; where a term has an established translation in {{language}}, use it. Do not simplify the meaning, do not add explanations, and do not soften or strengthen what the speaker says."
+  }
+}

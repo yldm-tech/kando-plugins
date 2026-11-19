@@ -1,0 +1,54 @@
+{
+  "schema": 1,
+  "id": "yldm.quiz-line",
+  "kind": "task",
+  "version": "1.0.0",
+  "license": "CC0-1.0",
+  "author": "Kando team",
+  "homepage": "https://github.com/yldm-tech/kando-plugins",
+  "name": {
+    "en": "Quiz me on this line",
+    "zh-Hans": "用这句考考我",
+    "zh-Hant": "用這句考考我",
+    "ja": "このセリフでクイズ",
+    "ko": "이 대사로 퀴즈 내기"
+  },
+  "description": {
+    "en": "Three short questions about the current line: a word's meaning, the grammar, and what the speaker means. Each card shows the answer under the question.",
+    "zh-Hans": "就当前这句出三道小题：一个词的意思、语法、说话人的意图。每张卡片在问题下面写出答案。",
+    "zh-Hant": "就目前這句出三道小題：一個詞的意思、文法、說話者的意圖。每張卡片在問題下面寫出答案。",
+    "ja": "今のセリフについて短い問題を3つ出します。語の意味、文法、話し手の意図。各カードの問題の下に答えがあります。",
+    "ko": "현재 대사에 대해 짧은 문제 세 개를 냅니다: 단어의 뜻, 문법, 화자의 의도. 각 카드에는 질문 아래에 답이 나옵니다."
+  },
+  "task": {
+    "scope": "line",
+    "prompt": "You are a language tutor. The learner is watching a video in the language of its original subtitles and wants to check that they understood the current line, the last one in the user's message. Write three short quiz questions about that line, in {{language}}: one about the meaning of a useful word or phrase in it, one about its grammar or a form used in it, and one about what the speaker means or feels, using the lines before it as context. Quote the words you ask about in the original language. Give each question a short, clear answer, with a one-sentence reason where it helps. Keep the questions at a level the line itself suggests; do not ask about anything outside the lines given.",
+    "reply": {
+      "fields": [
+        {
+          "key": "question",
+          "label": {
+            "en": "Question",
+            "zh-Hans": "问题",
+            "zh-Hant": "問題",
+            "ja": "問題",
+            "ko": "질문"
+          }
+        },
+        {
+          "key": "answer",
+          "label": {
+            "en": "Answer",
+            "zh-Hans": "答案",
+            "zh-Hant": "答案",
+            "ja": "答え",
+            "ko": "답"
+          }
+        }
+      ],
+      "items": 3
+    },
+    "render": "cards",
+    "maxTokens": 800
+  }
+}

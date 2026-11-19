@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "id": "yldm.style-concise",
+  "kind": "translate-style",
+  "version": "1.0.0",
+  "license": "CC0-1.0",
+  "author": "Kando team",
+  "homepage": "https://github.com/yldm-tech/kando-plugins",
+  "name": {
+    "en": "Concise subtitles",
+    "zh-Hans": "精简字幕",
+    "zh-Hant": "精簡字幕",
+    "ja": "簡潔な字幕",
+    "ko": "간결한 자막"
+  },
+  "description": {
+    "en": "Short translations that read in the time a subtitle stays on screen: the meaning first, fillers and repetition left out.",
+    "zh-Hans": "简短的译文，在字幕停留的时间里读得完：先保意思，省去口头禅和重复。",
+    "zh-Hant": "簡短的譯文，在字幕停留的時間裡讀得完：先保意思，省去口頭禪和重複。",
+    "ja": "字幕が表示されている間に読み切れる短い訳。意味を優先し、口癖や繰り返しは省きます。",
+    "ko": "자막이 화면에 머무는 동안 읽을 수 있는 짧은 번역. 의미를 우선하고 군말과 반복은 생략합니다."
+  },
+  "style": {
+    "prompt": "You translate film and video subtitles into {{language}}. Keep every translation short enough to read in the time the line is on screen: aim for no more than about two thirds of the length a full translation would take. Keep the meaning, the speaker's intent and any names or terms exactly; drop fillers, hesitations, false starts and repeated words. Prefer short, everyday words and simple sentence shapes. Never add explanations, notes or content that is not in the line. Keep names and terms consistent across lines."
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "schema": 1,
+  "id": "yldm.grammar-line",
+  "kind": "task",
+  "version": "1.0.0",
+  "license": "CC0-1.0",
+  "author": "Kando team",
+  "homepage": "https://github.com/yldm-tech/kando-plugins",
+  "name": {
+    "en": "Explain the grammar",
+    "zh-Hans": "讲解语法",
+    "zh-Hant": "講解文法",
+    "ja": "文法を解説",
+    "ko": "문법 설명"
+  },
+  "description": {
+    "en": "Breaks the current line into its parts, explains the grammar points it uses, and gives one new example sentence that uses the same pattern.",
+    "zh-Hans": "把当前这句拆成几个部分，讲解其中用到的语法点，再给一个用同样句型的新例句。",
+    "zh-Hant": "把目前這句拆成幾個部分，講解其中用到的文法點，再給一個用同樣句型的新例句。",
+    "ja": "今のセリフを要素に分け、使われている文法事項を解説し、同じ文型を使った新しい例文を1つ挙げます。",
+    "ko": "현재 대사를 구성 요소로 나누고, 쓰인 문법 사항을 설명한 뒤, 같은 문형을 쓴 새 예문을 하나 제시합니다."
+  },
+  "task": {
+    "scope": "line",
+    "prompt": "You are a patient grammar teacher. The learner is watching a video and wants to understand the grammar of the current line, the last one in the user's message, in its original language. Explain in {{language}}. In structure, break the line into its parts (words or chunks) in order, each with its role and a short gloss. In points, explain each grammar point or form the line uses: what it is, what it does here, and anything about it learners often get wrong; one short paragraph per point. In example, write one new, natural sentence in the original language that uses the line's main pattern, followed by its translation into {{language}}. Use the lines before it only as context.",
+    "reply": {
+      "fields": [
+        {
+          "key": "structure",
+          "label": {
+            "en": "Structure",
+            "zh-Hans": "句子结构",
+            "zh-Hant": "句子結構",
+            "ja": "文の構造",
+            "ko": "문장 구조"
+          }
+        },
+        {
+          "key": "points",
+          "label": {
+            "en": "Grammar points",
+            "zh-Hans": "语法点",
+            "zh-Hant": "文法點",
+            "ja": "文法のポイント",
+            "ko": "문법 포인트"
+          }
+        },
+        {
+          "key": "example",
+          "label": {
+            "en": "Example",
+            "zh-Hans": "例句",
+            "zh-Hant": "例句",
+            "ja": "例文",
+            "ko": "예문"
+          }
+        }
+      ]
+    },
+    "render": "sections",
+    "maxTokens": 1200
+  }
+}

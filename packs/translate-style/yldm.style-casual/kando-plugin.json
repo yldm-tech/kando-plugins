@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "id": "yldm.style-casual",
+  "kind": "translate-style",
+  "version": "1.0.0",
+  "license": "CC0-1.0",
+  "author": "Kando team",
+  "homepage": "https://github.com/yldm-tech/kando-plugins",
+  "name": {
+    "en": "Casual and natural",
+    "zh-Hans": "口语自然",
+    "zh-Hant": "口語自然",
+    "ja": "くだけた自然な訳",
+    "ko": "자연스러운 구어체"
+  },
+  "description": {
+    "en": "Translations that sound like people actually talk: relaxed wording, natural contractions, and slang carried over by its feel rather than word for word.",
+    "zh-Hans": "像人们平时说话那样的译文：用词放松，俚语按语气意译，而不是逐字翻。",
+    "zh-Hant": "像人們平時說話那樣的譯文：用詞放鬆，俚語按語氣意譯，而不是逐字翻。",
+    "ja": "普段の話し言葉のような訳。肩の力を抜いた言い回しで、スラングは直訳せず雰囲気で訳します。",
+    "ko": "실제로 사람들이 말하는 것처럼 들리는 번역. 편한 말투로, 속어는 직역하지 않고 느낌을 살려 옮깁니다."
+  },
+  "style": {
+    "prompt": "You translate film and video subtitles into {{language}} the way people actually speak it in everyday conversation. Use relaxed, natural wording, the contractions and sentence-final particles native speakers use, and carry over slang, jokes and interjections by their feel rather than word for word. Match each speaker's tone: friends sound like friends, kids sound like kids. Keep the meaning, names and terms exact, and never add explanations or content that is not in the line."
+  }
+}

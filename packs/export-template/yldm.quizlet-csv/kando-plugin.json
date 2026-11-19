@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "id": "yldm.quizlet-csv",
+  "kind": "export-template",
+  "version": "1.0.0",
+  "license": "CC0-1.0",
+  "author": "Kando team",
+  "homepage": "https://github.com/yldm-tech/kando-plugins",
+  "name": {
+    "en": "Quizlet (CSV)",
+    "zh-Hans": "Quizlet（CSV）",
+    "zh-Hant": "Quizlet（CSV）",
+    "ja": "Quizlet（CSV）",
+    "ko": "Quizlet (CSV)"
+  },
+  "description": {
+    "en": "Saved lines as a two-column CSV file without a header row: the original as the term, the translation as the definition. In Quizlet, import it with Comma between term and definition.",
+    "zh-Hans": "把收藏的句子写成两列、没有表头的 CSV 文件：原文作词语，译文作释义。在 Quizlet 导入时，词语和释义之间选「逗号」。",
+    "zh-Hant": "把收藏的句子寫成兩欄、沒有表頭的 CSV 檔案：原文作詞語，譯文作釋義。在 Quizlet 匯入時，詞語和釋義之間選「逗號」。",
+    "ja": "保存したセリフを見出し行のない2列の CSV ファイルにします。原文を用語、訳を定義にします。Quizlet で読み込むときは、用語と定義の区切りに「カンマ」を選びます。",
+    "ko": "저장한 대사를 머리글 행 없는 두 열 CSV 파일로 만듭니다. 원문은 용어, 번역은 정의가 됩니다. Quizlet에서 가져올 때 용어와 정의 사이 구분자로 쉼표를 고르세요."
+  },
+  "template": {
+    "format": "csv",
+    "columns": [
+      {"value": "{{original}}"},
+      {"value": "{{translation}}"}
+    ]
+  }
+}

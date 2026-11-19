@@ -1,0 +1,15 @@
+{
+  "maintainers": ["houko"],
+  "publishers": {
+    "kando": {
+      "name": "Kando (signed script plugins only)",
+      "github": ["houko"],
+      "scripts": true
+    },
+    "yldm": {
+      "name": "Kando team",
+      "github": ["houko"],
+      "scripts": false
+    }
+  }
+}
