@@ -1,0 +1,20 @@
+# The Worker that serves Kando's plugin directory on kando.yldm.ai (README.md in this folder). Fill in account_id and zone_id, then run `npx wrangler deploy` from this folder.
+name = "kando-plugins"
+main = "src/index.js"
+compatibility_date = "2026-11-01"
+
+# The Cloudflare account and the zone of yldm.ai (Cloudflare dashboard › yldm.ai › Overview, right-hand column).
+account_id = "<ACCOUNT_ID>"
+
+# Only these two paths reach the Worker; the rest of kando.yldm.ai stays the landing site.
+routes = [
+  { pattern = "kando.yldm.ai/plugin/index.json", zone_id = "<ZONE_ID>" },
+  { pattern = "kando.yldm.ai/plugin/packs/*", zone_id = "<ZONE_ID>" },
+]
+
+# No workers.dev address: the directory is reached through kando.yldm.ai alone.
+workers_dev = false
+
+[vars]
+# The GitHub Pages site the publish workflow deploys.
+ORIGIN = "https://yldm-tech.github.io/kando-plugins"
