@@ -4,12 +4,12 @@ main = "src/index.js"
 compatibility_date = "2026-11-01"
 
 # The Cloudflare account and the zone of yldm.ai (Cloudflare dashboard › yldm.ai › Overview, right-hand column).
-account_id = "<ACCOUNT_ID>"
+account_id = "e2b27aea5f599efdbe0a7016a2580d05"
 
 # Only these two paths reach the Worker; the rest of kando.yldm.ai stays the landing site.
 routes = [
-  { pattern = "kando.yldm.ai/plugin/index.json", zone_id = "<ZONE_ID>" },
-  { pattern = "kando.yldm.ai/plugin/packs/*", zone_id = "<ZONE_ID>" },
+  { pattern = "kando.yldm.ai/plugin/index.json", zone_id = "48174ca55af42b6125670a1adf7b5475" },
+  { pattern = "kando.yldm.ai/plugin/packs/*", zone_id = "48174ca55af42b6125670a1adf7b5475" },
 ]
 
 # No workers.dev address: the directory is reached through kando.yldm.ai alone.
