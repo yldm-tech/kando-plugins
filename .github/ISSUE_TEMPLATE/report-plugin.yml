@@ -1,0 +1,39 @@
+name: Report a plugin
+description: A listed plugin is broken, misleading, infringing or harmful.
+title: "Report: "
+labels: [report]
+body:
+  - type: markdown
+    attributes:
+      value: "For anything exploitable (a script plugin leaking data, a malicious link), report privately through the Security tab instead of here."
+  - type: input
+    id: id
+    attributes:
+      label: Plugin id
+      description: As shown in Kando's plugin details, such as alice.jlpt.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version
+  - type: dropdown
+    id: reason
+    attributes:
+      label: Problem
+      options:
+        - Does not work
+        - Wrong or misleading content or description
+        - License or copyright problem
+        - Offensive or harmful content
+        - Privacy or security concern
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      description: What happens, what you expected, and how to see it. Your Kando version and system help for bugs.
+    validations:
+      required: true

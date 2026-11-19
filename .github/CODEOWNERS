@@ -1,0 +1,4 @@
+# Everything outside packs/ and scripts/ decides how packs are checked, signed and served: a change to it needs a maintainer's review. Turn on "Require review from Code Owners" for main.
+*                   @houko
+/packs/
+/scripts/

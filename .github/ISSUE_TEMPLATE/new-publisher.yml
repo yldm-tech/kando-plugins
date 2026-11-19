@@ -1,0 +1,56 @@
+name: New publisher
+description: Register a publisher id to publish packs under, or ask for script plugin certification.
+title: "Publisher: "
+labels: [publisher]
+body:
+  - type: markdown
+    attributes:
+      value: "Every pack id starts with its publisher: `<publisher>.<name>`. Read CONTRIBUTING.md, Publishers, first. `kando` and `yldm` are reserved."
+  - type: input
+    id: publisher
+    attributes:
+      label: Publisher id
+      description: Lowercase letters and digits, hyphens inside allowed. Usually your GitHub name, project or organisation.
+      placeholder: alice
+    validations:
+      required: true
+  - type: textarea
+    id: accounts
+    attributes:
+      label: GitHub accounts
+      description: Accounts that may publish under it, one per line. Each must comment on this issue to confirm.
+      placeholder: alice
+    validations:
+      required: true
+  - type: input
+    id: display
+    attributes:
+      label: Display name
+      description: Who you are, as listed in publishers.json.
+    validations:
+      required: true
+  - type: textarea
+    id: plans
+    attributes:
+      label: What you plan to publish
+      description: Kinds and a sentence or two on each. Links to drafts help.
+    validations:
+      required: true
+  - type: checkboxes
+    id: scripts
+    attributes:
+      label: Script plugins
+      options:
+        - label: I also ask to be certified for script plugins. I will send the public key of a release key I keep offline, and accept a one-time code review and a certificate valid for at most a year.
+  - type: textarea
+    id: script-details
+    attributes:
+      label: Script plugin details
+      description: Only if you ticked the box above. A link to the plugin's source, what it does, the permissions and network hosts it needs.
+  - type: checkboxes
+    id: agree
+    attributes:
+      label: Agreement
+      options:
+        - label: I have read CONTRIBUTING.md and will publish only content I have the right to license as it describes.
+          required: true
