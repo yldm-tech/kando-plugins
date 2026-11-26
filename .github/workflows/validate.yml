@@ -20,7 +20,7 @@ concurrency:
 env:
   # The Kando checkout the validator is built from. Bump KANDO_REF to a commit of yldm-tech/Kando's main that has the tool, and again whenever Kando's pack rules change.
   KANDO_REPO: yldm-tech/Kando
-  KANDO_REF: 8d9dbf918fed798d898258af1c393a3f89b1e5b7
+  KANDO_REF: 9c8cbd4c4e149538b1c44be462b2217fd90f8782
   # The validator's Go package inside that checkout. It is built once and run as kando-plugin with the subcommands validate [--json] <pack file>, preview --markdown <pack file>... (a folder given to it is read as one unpacked pack) and index <folder> --base <url> --out <file>.
   KANDO_PLUGIN_TOOL: ./apps/kando/cmd/kando-plugin
 
